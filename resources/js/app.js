@@ -28,6 +28,13 @@ Vue.component('users', require('./components/Users.vue').default);
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+
+// var dt = require('datatables.net');
+// window.$.DataTable = dt;
+
+import 'datatables.net';
+import 'datatables.net-dt/css/jquery.dataTables.css';
+
 const app = new Vue({
     el: '#app'
 });

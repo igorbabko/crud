@@ -11,9 +11,7 @@
 |
 */
 
-Route::get('/', function () {
-    return view('index');
-});
+Route::redirect('/', '/lessons');
 
-Route::resource('lessons', 'LessonController');
-Route::resource('users', 'UserController');
+Route::view('/lessons', 'lessons.index');
+Route::view('/users', 'users.index');
