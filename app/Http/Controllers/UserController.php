@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\User;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller
 {
@@ -15,14 +16,14 @@ class UserController extends Controller
     public function index()
     {
         return Datatables::of(User::query())
-            ->addColumn('name', function ($row) {
-                return $row->user->name;
+            ->addColumn('name', function ($user) {
+                return $user->name;
             })
-            ->addColumn('email', function ($row) {
-                return $row->user->email;
+            ->addColumn('email', function ($user) {
+                return $user->email;
             })
-            ->addColumn('job_title', function ($row) {
-                return $row->user->job_title;
+            ->addColumn('job_title', function ($user) {
+                return $user->job_title;
             })
             ->make(true);
     }
