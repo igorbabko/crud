@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Lesson;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Yajra\DataTables\Facades\DataTables;
 
 class LessonController extends Controller
 {
@@ -15,7 +16,11 @@ class LessonController extends Controller
      */
     public function index()
     {
-        //
+        return Datatables::of(Lesson::query())
+            ->addColumn('name', function ($lesson) {
+                return $lesson->name;
+            })
+            ->make(true);
     }
 
     /**
