@@ -1,9 +1,9 @@
 <template>
-    <div ref="modal" class="modal fade" id="createLessonModal" tabindex="-1" role="dialog" aria-labelledby="createLessonModalLabel" aria-hidden="true">
+    <div ref="modal" class="modal fade" id="lessonModal" tabindex="-1" role="dialog" aria-labelledby="lessonModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="createLessonModalLabel">New Lesson</h5>
+                    <h5 class="modal-title" id="lessonModalLabel">{{ title }}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -22,7 +22,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button @click="submit" type="button" class="btn btn-primary">Create</button>
+                    <button @click="submit" type="button" class="btn btn-primary">Submit</button>
                 </div>
             </div>
         </div>
@@ -43,11 +43,11 @@
             }
         },
 
-        mounted () {
+        mounted() {
             $(this.$refs.modal).on('shown.bs.modal', (e) => {
                 $('.selectpicker').selectpicker();
-                $('#name').focus()
-            })
+                $('#name').focus();
+            });
 
             this.form.user_ids = this.userIds
         },
@@ -57,32 +57,31 @@
                 return field => this.errors && this.errors[field];
             },
             userIds() {
-                console.log('data')
-                console.log(this.lesson)
-
-                return []
-                // return this.lesson ? this.lesson.users.map(user => user.id) : [];
+                return this.lesson ? this.lesson.users.map(user => user.id) : [];
+            },
+            title() {
+                return this.lesson ? 'Edit Lesson' : 'Create Lesson';
             }
         },
 
         methods: {
             submit() {
-                return this.lesson ? this.create() : this.update()
+                return this.lesson ? this.create() : this.update();
             },
 
             create() {
                 axios.post('/api/lessons', this.form).then(response => {
-                    this.$emit('created', response.data)
+                    this.$emit('created', response.data);
                 }).catch(error => {
-                    this.errors = error.response.data.errors
+                    this.errors = error.response.data.errors;
                 })
             },
 
             update() {
                 axios.patch('/api/lessons', this.form).then(response => {
-                    this.$emit('updated', response.data)
+                    this.$emit('updated', response.data);
                 }).catch(error => {
-                    this.errors = error.response.data.errors
+                    this.errors = error.response.data.errors;
                 })
             }
         }

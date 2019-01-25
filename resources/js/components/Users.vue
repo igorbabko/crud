@@ -1,5 +1,5 @@
 <template>
-    <table ref="table" class="table table-striped table-bordered nowrap" style="width:100%">
+    <table ref="table" class="table table-striped table-bordered nowrap">
         <thead>
             <tr>
                 <th>Name</th>
@@ -19,16 +19,26 @@
 
 <script>
     export default {
+        props: ['users'],
+
         mounted() {
-            $(this.$refs.table).DataTable({
-                ajax: '/api/users',
-                dataSrc: 'data',
+            let options = {
+                responsive: true,
                 columns: [
                     { data: 'name' },
                     { data: 'email' },
                     { data: 'job_title' },
                 ]
-            });
+            };
+
+            if (this.users) {
+                options.data = this.users;
+                // options.dataSrc = 'data';
+            } else {
+                options.ajax = '/api/users';
+            }
+
+            $(this.$refs.table).DataTable(options);
         }
     }
 </script>

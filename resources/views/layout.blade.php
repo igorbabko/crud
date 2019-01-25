@@ -14,7 +14,7 @@
         <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
     </head>
     <body>
-        <div id="app" class="container-fluid">
+        <div id="app" class="container">
             @yield ('content')
         </div>
 

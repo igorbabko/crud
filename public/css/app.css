@@ -6043,6 +6043,11 @@ li.selected {
   background: #efefef;
 }
 
-#createLessonModal .bootstrap-select {
-  width: 100%;
+#lessonModal .bootstrap-select,
+table {
+  width: 100% !important;
+}
+
+#showLessonModal .modal-dialog {
+  max-width: 900px !important;
 }

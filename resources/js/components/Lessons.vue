@@ -1,9 +1,9 @@
 <template>
     <div>
         <div class="text-right mb-2">
-            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#createLessonModal"><i class="fas fa-plus-circle"></i> New</button>
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#lessonModal"><i class="fas fa-plus-circle"></i> New</button>
         </div>
-        <table ref="table" class="table table-striped table-bordered nowrap" style="width:100%">
+        <table ref="table" class="table table-striped table-bordered nowrap">
             <thead>
                 <tr>
                     <th>Name</th>
@@ -18,15 +18,18 @@
             </tfoot>
         </table>
         <lesson-modal :lesson="lesson" :users="users" @created="add" />
+        <show-lesson-modal :lesson="lesson" />
     </div>
 </template>
 
 <script>
     import LessonModal from './LessonModal'
+    import ShowLessonModal from './ShowLessonModal'
 
     export default {
         components: {
-            LessonModal
+            LessonModal,
+            ShowLessonModal
         },
 
         data() {
@@ -58,13 +61,13 @@
                     { data: 'name' },
                     {
                         data: 'lesson',
-                        width: '20%',
+                        width: '10%',
                         orderable: false,
                         render: (id, type, row, meta) => `
                             <div class="action-buttons" data-id="${meta.row}">
-                                <a href="#" class="btn btn-sm btn-primary btn-add">
+                                <button type="button" class="btn btn-sm btn-primary btn-add" data-toggle="modal" data-target="#showLessonModal">
                                     <i class="fas fa-eye"></i>
-                                </a>
+                                </button>
                                 <a href="#" class="btn btn-sm btn-info btn-edit">
                                     <i class="fas fa-edit"></i>
                                 </a>
@@ -78,10 +81,16 @@
                 initComplete: (settings, json) => {
                     let self = this
 
-                    $(this.$refs.table).delegate('a', 'click', function () {
-                        let rowId = $(this).parent().data('id')
+                    $(this.$refs.table).delegate('.action-buttons button', 'click', function () {
+                        let $actionBtn = $(this);
+                        let rowId = $actionBtn.parent().data('id');
+                        self.lesson = self.table.row(rowId).data();
 
-                        this.lesson = self.table.row(rowId).data()
+                        if ($actionBtn.hasClass('btn-show')) {
+                        } else if ($actionBtn.hasClass('btn-edit')) {
+                        } else if ($actionBtn.hasClass('btn-delete')) {
+                            // document.confirm()
+                        }
                     })
                 }
             });

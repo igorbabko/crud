@@ -41,13 +41,9 @@ class LessonController extends Controller
 
         $lesson = Lesson::create($request->only('name'));
 
-        $lesson->users()->sync($request->user_ids);
-
-        $lesson->load('users');
-
-        $lesson['actions'] = $this->buildActionButtons($lesson);
-
-        return $lesson->load('users');
+        return tap($lesson)
+            ->users()
+            ->sync($request->user_ids);
     }
 
     /**
@@ -66,13 +62,9 @@ class LessonController extends Controller
 
         $lesson->update($request->only('name'));
 
-        $lesson->users()->sync($request->user_ids);
-
-        $lesson->load('users');
-
-        $lesson['actions'] = $this->buildActionButtons($lesson);
-
-        return $lesson;
+        return tap($lesson)
+            ->users()
+            ->sync($request->user_ids);
     }
 
     /**
@@ -84,20 +76,5 @@ class LessonController extends Controller
     public function destroy(Lesson $lesson)
     {
         return $lesson->delete();
-    }
-
-    protected function buildActionButtons($item)
-    {
-        return '
-            <a href="#" class="btn btn-sm btn-primary">
-                <i class="fas fa-eye"></i>
-            </a>
-            <a href="#" class="btn btn-sm btn-info">
-                <i class="fas fa-edit"></i>
-            </a>
-            <a href="#" class="btn btn-sm btn-danger">
-                <i class="fas fa-times"></i>
-            </a>
-        ';
     }
 }
