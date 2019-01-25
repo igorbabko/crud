@@ -33,13 +33,12 @@
                 columns: [
                     { data: 'name' },
                     { data: 'email' },
-                    { data: 'job_title' },
+                    { data: 'job_title' }
                 ]
             };
 
             if (this.users) {
                 options.data = this.users;
-                // options.dataSrc = 'data';
             } else {
                 options.ajax = '/api/users';
             }

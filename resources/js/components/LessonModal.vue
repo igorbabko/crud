@@ -18,7 +18,7 @@
                         <div class="form-group">
                             <label for="userIds" class="col-form-label">Users:</label>
                             <select id="userIds" class="selectpicker" v-model="form.user_ids" multiple>
-                                <option v-for="user in users" :value="user.id">{{ user.name }}</option>
+                                <option v-for="user in users" :key="user.id" :value="user.id">{{ user.name }}</option>
                             </select>
                         </div>
                     </form>
@@ -78,8 +78,7 @@
             create() {
                 axios.post('/api/lessons', this.form).then(response => {
                     this.$emit('created', response.data);
-                    $(this.$refs.modal).modal('hide')
-                    $('.toast').toast()
+                    $(this.$refs.modal).modal('hide');
                 }).catch(error => {
                     this.errors = error.response.data.errors;
                 })
@@ -88,8 +87,7 @@
             update() {
                 axios.patch(`/api/lessons/${this.lesson.id}`, this.form).then(response => {
                     this.$emit('updated', response.data);
-                    $(this.$refs.modal).modal('hide')
-                    $('.toast').toast('show')
+                    $(this.$refs.modal).modal('hide');
                 }).catch(error => {
                     this.errors = error.response.data.errors;
                 })

@@ -39,7 +39,9 @@ class LessonController extends Controller
             'user_ids.*' => 'exists:users,id'
         ]);
 
-        return Lesson::create($request->only('name'))->syncUsers($request->user_ids);
+        $lesson = Lesson::create($request->only('name'));
+
+        return $lesson->syncUsers($request->user_ids);
     }
 
     /**
@@ -70,6 +72,8 @@ class LessonController extends Controller
      */
     public function destroy(Lesson $lesson)
     {
-        return $lesson->delete();
+        $lesson->delete();
+
+        return response()->json(['message' => 'Lesson has been deleted']);
     }
 }

@@ -1,7 +1,9 @@
 <template>
     <div>
         <div class="text-right mb-2">
-            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#lessonModal"><i class="fas fa-plus-circle"></i> New</button>
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#lessonModal">
+                <i class="fas fa-plus-circle"></i> New
+            </button>
         </div>
         <table ref="table" class="table table-striped table-bordered nowrap">
             <thead>
@@ -24,17 +26,20 @@
                 @updated="update"
         />
         <show-lesson-modal :lesson="lesson" />
+        <delete-lesson-modal :lesson="lesson" @deleted="remove" />
     </div>
 </template>
 
 <script>
-    import LessonModal from './LessonModal'
-    import ShowLessonModal from './ShowLessonModal'
+    import DeleteLessonModal from './DeleteLessonModal';
+    import ShowLessonModal from './ShowLessonModal';
+    import LessonModal from './LessonModal';
 
     export default {
         components: {
-            LessonModal,
-            ShowLessonModal
+            DeleteLessonModal,
+            ShowLessonModal,
+            LessonModal
         },
 
         data() {
@@ -43,25 +48,21 @@
                 lesson: null,
                 table: null,
                 lessons: [],
-                users: [],
+                users: []
             }
         },
 
         mounted() {
             axios.get('/api/lessons').then(response => {
-                this.lessons = response.data.data
-            })
+                this.lessons = response.data.data;
+            });
 
             axios.get('/api/users').then(response => {
-                this.users = response.data.data
-            })
+                this.users = response.data.data;
+            });
 
             this.table = $(this.$refs.table).DataTable({
                 ajax: '/api/lessons',
-                // processing: true,
-                // serverSide: true,
-                // dom: 'Bfrtip',
-                // dom: 'l<"toolbar">frtip',
                 responsive: true,
                 columns: [
                     { data: 'name' },
@@ -77,46 +78,42 @@
                                 <button type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#lessonModal">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <a href="#" class="btn btn-sm btn-danger btn-delete">
+                                <a href="#" >
+                                <button type="button" class="btn btn-sm btn-danger btn-delete" data-toggle="modal" data-target="#deleteLessonModal">
                                     <i class="fas fa-times"></i>
-                                </a>
+                                </button>
                             </div>
                         `
                     }
                 ],
                 initComplete: (settings, json) => {
-                    let self = this
+                    let self = this;
 
                     $(this.$refs.table).delegate('.action-buttons button', 'click', function () {
                         let $btn = $(this);
                         self.currentIndex = $btn.parent().data('id');
                         self.lesson = self.table.row(self.currentIndex).data();
-
-                        if ($btn.hasClass('btn-show')) {
-                        } else if ($btn.hasClass('btn-edit')) {
-                        } else if ($btn.hasClass('btn-delete')) {
-                            // document.confirm()
-                        }
                     })
                 }
             });
         },
 
         methods: {
-            show(index) {
-                console.log('sdf')
-                // console.log(this.table.row(index))
-            },
             add(lesson) {
-                this.table.row.add(lesson)
+                this.table.row.add(lesson);
+
+                return this;
             },
             update(lesson) {
-                console.log('updating')
-                console.log(lesson)
-                console.log(this.currentIndex)
+                this.table.row(this.currentIndex).data(lesson);
 
-                this.table.row(this.currentIndex).data(lesson)
+                return this;
             },
+            remove() {
+                this.table.row(this.currentIndex).remove().draw();
+
+                return this;
+            }
         }
     }
 </script>
