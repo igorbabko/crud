@@ -30,6 +30,7 @@ Vue.component('lessons', require('./components/Lessons.vue').default);
  */
 
 import 'datatables.net-responsive-bs4';
+import 'bootstrap-select';
 
 const app = new Vue({
     el: '#app'

@@ -20,29 +20,10 @@ class LessonController extends Controller
             ->addColumn('name', function ($lesson) {
                 return $lesson->name;
             })
-            ->addColumn('actions', function ($lesson) {
-                return '
-                    <form action="'.route('lessons.destroy', $lesson->id).'" class="delete-survey-form"  method="POST">
-                        <a href="'.route('lessons.edit', $lesson->id).'" class="btn btn-sm btn-primary"><i class="fas fa-eye"></i></a>
-                        <a href="#" class="btn btn-sm btn-info btn-show-users" data-id="'.$lesson->id.'"><i class="fas fa-edit"></i></a>
-                        '.csrf_field().'
-                        <input type="hidden" name="_method" value="delete">
-                        <button type="button" class="btn btn-sm btn-danger delete-survey-button"><i class="fas fa-times"></i></button>
-                    </form>
-                ';
+            ->addColumn('id', function ($lesson) {
+                return $lesson->id;
             })
-            ->rawColumns(['actions'])
             ->make(true);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -53,29 +34,20 @@ class LessonController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        $request->validate([
+            'name' => 'required|max:255',
+            'user_ids.*' => 'exists:users,id'
+        ]);
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Lesson  $lesson
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Lesson $lesson)
-    {
-        //
-    }
+        $lesson = Lesson::create($request->only('name'));
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Lesson  $lesson
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Lesson $lesson)
-    {
-        //
+        $lesson->users()->sync($request->user_ids);
+
+        $lesson->load('users');
+
+        $lesson['actions'] = $this->buildActionButtons($lesson);
+
+        return $lesson->load('users');
     }
 
     /**
@@ -87,7 +59,20 @@ class LessonController extends Controller
      */
     public function update(Request $request, Lesson $lesson)
     {
-        //
+        $request->validate([
+            'name' => 'required|max:255',
+            'user_ids.*' => 'exists:users,id'
+        ]);
+
+        $lesson->update($request->only('name'));
+
+        $lesson->users()->sync($request->user_ids);
+
+        $lesson->load('users');
+
+        $lesson['actions'] = $this->buildActionButtons($lesson);
+
+        return $lesson;
     }
 
     /**
@@ -98,6 +83,21 @@ class LessonController extends Controller
      */
     public function destroy(Lesson $lesson)
     {
-        //
+        return $lesson->delete();
+    }
+
+    protected function buildActionButtons($item)
+    {
+        return '
+            <a href="#" class="btn btn-sm btn-primary">
+                <i class="fas fa-eye"></i>
+            </a>
+            <a href="#" class="btn btn-sm btn-info">
+                <i class="fas fa-edit"></i>
+            </a>
+            <a href="#" class="btn btn-sm btn-danger">
+                <i class="fas fa-times"></i>
+            </a>
+        ';
     }
 }

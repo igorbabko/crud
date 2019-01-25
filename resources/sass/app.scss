@@ -15,6 +15,16 @@ $fa-font-path: '/webfonts';
 // @import '~@fortawesome/fontawesome-free/scss/regular';
 @import '~@fortawesome/fontawesome-free/scss/fontawesome';
 
+@import '~bootstrap-select/dist/css/bootstrap-select';
+
 body {
     padding: 50px;
+}
+
+li.selected {
+    background: #efefef;
+}
+
+#createLessonModal .bootstrap-select {
+    width: 100%;
 }
