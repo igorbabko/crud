@@ -15,9 +15,12 @@
                             <input v-model="form.name" type="text" :class="['form-control', {'is-invalid': isInvalid('name')}]" id="name">
                             <div v-if="isInvalid('name')" v-text="errors.name[0]" class="invalid-feedback"></div>
                         </div>
-                        <select class="selectpicker" v-model="form.user_ids" multiple>
-                            <option v-for="user in users" :value="user.id">{{ user.name }}</option>
-                        </select>
+                        <div class="form-group">
+                            <label for="userIds" class="col-form-label">Users:</label>
+                            <select id="userIds" class="selectpicker" v-model="form.user_ids" multiple>
+                                <option v-for="user in users" :value="user.id">{{ user.name }}</option>
+                            </select>
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -37,19 +40,22 @@
             return {
                 errors: null,
                 form: {
-                    name: this.lesson ? this.lesson.name : '',
+                    name: '',
                     user_ids: [],
                 }
             }
         },
 
         mounted() {
-            $(this.$refs.modal).on('shown.bs.modal', (e) => {
+            $(this.$refs.modal).on('show.bs.modal', (e) => {
+                this.form.name = this.lesson ? this.lesson.name : '';
+                this.form.user_ids = this.userIds;
                 $('.selectpicker').selectpicker();
-                $('#name').focus();
             });
 
-            this.form.user_ids = this.userIds
+            $(this.$refs.modal).on('shown.bs.modal', (e) => {
+                $('#name').select().focus();
+            });
         },
 
         computed: {
@@ -66,20 +72,24 @@
 
         methods: {
             submit() {
-                return this.lesson ? this.create() : this.update();
+                return this.lesson ? this.update() : this.create();
             },
 
             create() {
                 axios.post('/api/lessons', this.form).then(response => {
                     this.$emit('created', response.data);
+                    $(this.$refs.modal).modal('hide')
+                    $('.toast').toast()
                 }).catch(error => {
                     this.errors = error.response.data.errors;
                 })
             },
 
             update() {
-                axios.patch('/api/lessons', this.form).then(response => {
+                axios.patch(`/api/lessons/${this.lesson.id}`, this.form).then(response => {
                     this.$emit('updated', response.data);
+                    $(this.$refs.modal).modal('hide')
+                    $('.toast').toast('show')
                 }).catch(error => {
                     this.errors = error.response.data.errors;
                 })

@@ -16,7 +16,7 @@ class LessonController extends Controller
      */
     public function index()
     {
-        return Datatables::of(Lesson::query())
+        return Datatables::of(Lesson::latest())
             ->addColumn('name', function ($lesson) {
                 return $lesson->name;
             })
@@ -39,11 +39,7 @@ class LessonController extends Controller
             'user_ids.*' => 'exists:users,id'
         ]);
 
-        $lesson = Lesson::create($request->only('name'));
-
-        return tap($lesson)
-            ->users()
-            ->sync($request->user_ids);
+        return Lesson::create($request->only('name'))->syncUsers($request->user_ids);
     }
 
     /**
@@ -60,11 +56,10 @@ class LessonController extends Controller
             'user_ids.*' => 'exists:users,id'
         ]);
 
-        $lesson->update($request->only('name'));
+        $lesson->name = $request->name;
+        $lesson->syncUsers($request->user_ids);
 
-        return tap($lesson)
-            ->users()
-            ->sync($request->user_ids);
+        return tap($lesson)->save();
     }
 
     /**

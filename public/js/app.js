@@ -1794,30 +1794,38 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['lesson', 'users'],
   data: function data() {
     return {
       errors: null,
       form: {
-        name: this.lesson ? this.lesson.name : '',
+        name: '',
         user_ids: []
       }
     };
   },
   mounted: function mounted() {
-    $(this.$refs.modal).on('shown.bs.modal', function (e) {
+    var _this = this;
+
+    $(this.$refs.modal).on('show.bs.modal', function (e) {
+      _this.form.name = _this.lesson ? _this.lesson.name : '';
+      _this.form.user_ids = _this.userIds;
       $('.selectpicker').selectpicker();
-      $('#name').focus();
     });
-    this.form.user_ids = this.userIds;
+    $(this.$refs.modal).on('shown.bs.modal', function (e) {
+      $('#name').select().focus();
+    });
   },
   computed: {
     isInvalid: function isInvalid() {
-      var _this = this;
+      var _this2 = this;
 
       return function (field) {
-        return _this.errors && _this.errors[field];
+        return _this2.errors && _this2.errors[field];
       };
     },
     userIds: function userIds() {
@@ -1831,24 +1839,30 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     submit: function submit() {
-      return this.lesson ? this.create() : this.update();
+      return this.lesson ? this.update() : this.create();
     },
     create: function create() {
-      var _this2 = this;
+      var _this3 = this;
 
       axios.post('/api/lessons', this.form).then(function (response) {
-        _this2.$emit('created', response.data);
+        _this3.$emit('created', response.data);
+
+        $(_this3.$refs.modal).modal('hide');
+        $('.toast').toast();
       }).catch(function (error) {
-        _this2.errors = error.response.data.errors;
+        _this3.errors = error.response.data.errors;
       });
     },
     update: function update() {
-      var _this3 = this;
+      var _this4 = this;
 
-      axios.patch('/api/lessons', this.form).then(function (response) {
-        _this3.$emit('updated', response.data);
+      axios.patch("/api/lessons/".concat(this.lesson.id), this.form).then(function (response) {
+        _this4.$emit('updated', response.data);
+
+        $(_this4.$refs.modal).modal('hide');
+        $('.toast').toast('show');
       }).catch(function (error) {
-        _this3.errors = error.response.data.errors;
+        _this4.errors = error.response.data.errors;
       });
     }
   }
@@ -1891,6 +1905,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -1900,6 +1919,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      currentIndex: null,
       lesson: null,
       table: null,
       lessons: [],
@@ -1929,17 +1949,17 @@ __webpack_require__.r(__webpack_exports__);
         width: '10%',
         orderable: false,
         render: function render(id, type, row, meta) {
-          return "\n                        <div class=\"action-buttons\" data-id=\"".concat(meta.row, "\">\n                            <button type=\"button\" class=\"btn btn-sm btn-primary btn-add\" data-toggle=\"modal\" data-target=\"#showLessonModal\">\n                                <i class=\"fas fa-eye\"></i>\n                            </button>\n                            <a href=\"#\" class=\"btn btn-sm btn-info btn-edit\">\n                                <i class=\"fas fa-edit\"></i>\n                            </a>\n                            <a href=\"#\" class=\"btn btn-sm btn-danger btn-delete\">\n                                <i class=\"fas fa-times\"></i>\n                            </a>\n                        </div>\n                    ");
+          return "\n                        <div class=\"action-buttons\" data-id=\"".concat(meta.row, "\">\n                            <button type=\"button\" class=\"btn btn-sm btn-primary btn-add\" data-toggle=\"modal\" data-target=\"#showLessonModal\">\n                                <i class=\"fas fa-eye\"></i>\n                            </button>\n                            <button type=\"button\" class=\"btn btn-sm btn-info btn-edit\" data-toggle=\"modal\" data-target=\"#lessonModal\">\n                                <i class=\"fas fa-edit\"></i>\n                            </button>\n                            <a href=\"#\" class=\"btn btn-sm btn-danger btn-delete\">\n                                <i class=\"fas fa-times\"></i>\n                            </a>\n                        </div>\n                    ");
         }
       }],
       initComplete: function initComplete(settings, json) {
         var self = _this;
         $(_this.$refs.table).delegate('.action-buttons button', 'click', function () {
-          var $actionBtn = $(this);
-          var rowId = $actionBtn.parent().data('id');
-          self.lesson = self.table.row(rowId).data();
+          var $btn = $(this);
+          self.currentIndex = $btn.parent().data('id');
+          self.lesson = self.table.row(self.currentIndex).data();
 
-          if ($actionBtn.hasClass('btn-show')) {} else if ($actionBtn.hasClass('btn-edit')) {} else if ($actionBtn.hasClass('btn-delete')) {// document.confirm()
+          if ($btn.hasClass('btn-show')) {} else if ($btn.hasClass('btn-edit')) {} else if ($btn.hasClass('btn-delete')) {// document.confirm()
           }
         });
       }
@@ -1952,10 +1972,11 @@ __webpack_require__.r(__webpack_exports__);
     add: function add(lesson) {
       this.table.row.add(lesson);
     },
-    update: function update(lesson, i) {
+    update: function update(lesson) {
       console.log('updating');
       console.log(lesson);
-      this.table.row(lesson, i);
+      console.log(this.currentIndex);
+      this.table.row(this.currentIndex).data(lesson);
     }
   }
 });
@@ -1998,6 +2019,39 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Toast.vue?vue&type=script&lang=js&":
+/*!****************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Toast.vue?vue&type=script&lang=js& ***!
+  \****************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  mounted: function mounted() {
+    $('.toast').toast({
+      delay: 3000
+    });
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Users.vue?vue&type=script&lang=js&":
 /*!****************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Users.vue?vue&type=script&lang=js& ***!
@@ -2028,6 +2082,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['users'],
+  data: function data() {
+    return {
+      table: null
+    };
+  },
   mounted: function mounted() {
     var options = {
       responsive: true,
@@ -2046,7 +2105,12 @@ __webpack_require__.r(__webpack_exports__);
       options.ajax = '/api/users';
     }
 
-    $(this.$refs.table).DataTable(options);
+    this.table = $(this.$refs.table).DataTable(options);
+  },
+  watch: {
+    users: function users() {
+      this.table.clear().rows.add(this.users).draw();
+    }
   }
 });
 
@@ -56814,46 +56878,57 @@ var render = function() {
                     : _vm._e()
                 ]),
                 _vm._v(" "),
-                _c(
-                  "select",
-                  {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.form.user_ids,
-                        expression: "form.user_ids"
+                _c("div", { staticClass: "form-group" }, [
+                  _c(
+                    "label",
+                    {
+                      staticClass: "col-form-label",
+                      attrs: { for: "userIds" }
+                    },
+                    [_vm._v("Users:")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "select",
+                    {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.form.user_ids,
+                          expression: "form.user_ids"
+                        }
+                      ],
+                      staticClass: "selectpicker",
+                      attrs: { id: "userIds", multiple: "" },
+                      on: {
+                        change: function($event) {
+                          var $$selectedVal = Array.prototype.filter
+                            .call($event.target.options, function(o) {
+                              return o.selected
+                            })
+                            .map(function(o) {
+                              var val = "_value" in o ? o._value : o.value
+                              return val
+                            })
+                          _vm.$set(
+                            _vm.form,
+                            "user_ids",
+                            $event.target.multiple
+                              ? $$selectedVal
+                              : $$selectedVal[0]
+                          )
+                        }
                       }
-                    ],
-                    staticClass: "selectpicker",
-                    attrs: { multiple: "" },
-                    on: {
-                      change: function($event) {
-                        var $$selectedVal = Array.prototype.filter
-                          .call($event.target.options, function(o) {
-                            return o.selected
-                          })
-                          .map(function(o) {
-                            var val = "_value" in o ? o._value : o.value
-                            return val
-                          })
-                        _vm.$set(
-                          _vm.form,
-                          "user_ids",
-                          $event.target.multiple
-                            ? $$selectedVal
-                            : $$selectedVal[0]
-                        )
-                      }
-                    }
-                  },
-                  _vm._l(_vm.users, function(user) {
-                    return _c("option", { domProps: { value: user.id } }, [
-                      _vm._v(_vm._s(user.name))
-                    ])
-                  }),
-                  0
-                )
+                    },
+                    _vm._l(_vm.users, function(user) {
+                      return _c("option", { domProps: { value: user.id } }, [
+                        _vm._v(_vm._s(user.name))
+                      ])
+                    }),
+                    0
+                  )
+                ])
               ]
             )
           ]),
@@ -56939,7 +57014,7 @@ var render = function() {
       _vm._v(" "),
       _c("lesson-modal", {
         attrs: { lesson: _vm.lesson, users: _vm.users },
-        on: { created: _vm.add }
+        on: { created: _vm.add, updated: _vm.update }
       }),
       _vm._v(" "),
       _c("show-lesson-modal", { attrs: { lesson: _vm.lesson } })
@@ -57097,6 +57172,77 @@ var staticRenderFns = [
         [_vm._v("Close")]
       )
     ])
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Toast.vue?vue&type=template&id=3c00b968&":
+/*!********************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Toast.vue?vue&type=template&id=3c00b968& ***!
+  \********************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _vm._m(0)
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "div",
+      {
+        staticClass: "toast",
+        staticStyle: { position: "relative", "min-height": "200px" },
+        attrs: {
+          role: "alert",
+          "aria-live": "assertive",
+          "aria-atomic": "true"
+        }
+      },
+      [
+        _c(
+          "div",
+          {
+            staticClass: "toast-header",
+            staticStyle: { position: "absolute", top: "0", right: "0" }
+          },
+          [
+            _c("strong", { staticClass: "mr-auto" }, [_vm._v("Done")]),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                staticClass: "ml-2 mb-1 close",
+                attrs: {
+                  type: "button",
+                  "data-dismiss": "toast",
+                  "aria-label": "Close"
+                }
+              },
+              [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+            )
+          ]
+        ),
+        _vm._v(" "),
+        _c("div", { staticClass: "toast-body" }, [
+          _vm._v("Operation successfull")
+        ])
+      ]
+    )
   }
 ]
 render._withStripped = true
@@ -68450,6 +68596,7 @@ window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.
 
 Vue.component('users', __webpack_require__(/*! ./components/Users.vue */ "./resources/js/components/Users.vue").default);
 Vue.component('lessons', __webpack_require__(/*! ./components/Lessons.vue */ "./resources/js/components/Lessons.vue").default);
+Vue.component('toast', __webpack_require__(/*! ./components/Toast.vue */ "./resources/js/components/Toast.vue").default);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
@@ -68724,6 +68871,75 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ShowLessonModal_vue_vue_type_template_id_b4f8c506___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ShowLessonModal_vue_vue_type_template_id_b4f8c506___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/Toast.vue":
+/*!*******************************************!*\
+  !*** ./resources/js/components/Toast.vue ***!
+  \*******************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Toast_vue_vue_type_template_id_3c00b968___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Toast.vue?vue&type=template&id=3c00b968& */ "./resources/js/components/Toast.vue?vue&type=template&id=3c00b968&");
+/* harmony import */ var _Toast_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Toast.vue?vue&type=script&lang=js& */ "./resources/js/components/Toast.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _Toast_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Toast_vue_vue_type_template_id_3c00b968___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Toast_vue_vue_type_template_id_3c00b968___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/Toast.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/Toast.vue?vue&type=script&lang=js&":
+/*!********************************************************************!*\
+  !*** ./resources/js/components/Toast.vue?vue&type=script&lang=js& ***!
+  \********************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Toast_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./Toast.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Toast.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Toast_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/Toast.vue?vue&type=template&id=3c00b968&":
+/*!**************************************************************************!*\
+  !*** ./resources/js/components/Toast.vue?vue&type=template&id=3c00b968& ***!
+  \**************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Toast_vue_vue_type_template_id_3c00b968___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./Toast.vue?vue&type=template&id=3c00b968& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Toast.vue?vue&type=template&id=3c00b968&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Toast_vue_vue_type_template_id_3c00b968___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Toast_vue_vue_type_template_id_3c00b968___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

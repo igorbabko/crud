@@ -16,7 +16,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return Datatables::of(User::query())
+        return Datatables::of(User::latest())
             ->addColumn('name', function ($user) {
                 return $user->name;
             })

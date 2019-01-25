@@ -21,6 +21,12 @@
     export default {
         props: ['users'],
 
+        data() {
+            return {
+                table: null,
+            }
+        },
+
         mounted() {
             let options = {
                 responsive: true,
@@ -38,7 +44,13 @@
                 options.ajax = '/api/users';
             }
 
-            $(this.$refs.table).DataTable(options);
+            this.table = $(this.$refs.table).DataTable(options);
+        },
+
+        watch: {
+            users() {
+                this.table.clear().rows.add(this.users).draw();
+            }
         }
     }
 </script>

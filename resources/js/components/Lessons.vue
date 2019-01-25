@@ -17,7 +17,12 @@
                 </tr>
             </tfoot>
         </table>
-        <lesson-modal :lesson="lesson" :users="users" @created="add" />
+        <lesson-modal
+                :lesson="lesson"
+                :users="users"
+                @created="add"
+                @updated="update"
+        />
         <show-lesson-modal :lesson="lesson" />
     </div>
 </template>
@@ -34,6 +39,7 @@
 
         data() {
             return {
+                currentIndex: null,
                 lesson: null,
                 table: null,
                 lessons: [],
@@ -68,9 +74,9 @@
                                 <button type="button" class="btn btn-sm btn-primary btn-add" data-toggle="modal" data-target="#showLessonModal">
                                     <i class="fas fa-eye"></i>
                                 </button>
-                                <a href="#" class="btn btn-sm btn-info btn-edit">
+                                <button type="button" class="btn btn-sm btn-info btn-edit" data-toggle="modal" data-target="#lessonModal">
                                     <i class="fas fa-edit"></i>
-                                </a>
+                                </button>
                                 <a href="#" class="btn btn-sm btn-danger btn-delete">
                                     <i class="fas fa-times"></i>
                                 </a>
@@ -82,13 +88,13 @@
                     let self = this
 
                     $(this.$refs.table).delegate('.action-buttons button', 'click', function () {
-                        let $actionBtn = $(this);
-                        let rowId = $actionBtn.parent().data('id');
-                        self.lesson = self.table.row(rowId).data();
+                        let $btn = $(this);
+                        self.currentIndex = $btn.parent().data('id');
+                        self.lesson = self.table.row(self.currentIndex).data();
 
-                        if ($actionBtn.hasClass('btn-show')) {
-                        } else if ($actionBtn.hasClass('btn-edit')) {
-                        } else if ($actionBtn.hasClass('btn-delete')) {
+                        if ($btn.hasClass('btn-show')) {
+                        } else if ($btn.hasClass('btn-edit')) {
+                        } else if ($btn.hasClass('btn-delete')) {
                             // document.confirm()
                         }
                     })
@@ -104,11 +110,12 @@
             add(lesson) {
                 this.table.row.add(lesson)
             },
-            update(lesson, i) {
+            update(lesson) {
                 console.log('updating')
                 console.log(lesson)
+                console.log(this.currentIndex)
 
-                this.table.row(lesson, i)
+                this.table.row(this.currentIndex).data(lesson)
             },
         }
     }

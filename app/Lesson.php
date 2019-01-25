@@ -14,4 +14,11 @@ class Lesson extends Model
     {
         return $this->belongsToMany(User::class)->withTimestamps();
     }
+
+    public function syncUsers($userIds = [])
+    {
+        $this->users()->sync($userIds);
+
+        return $this;
+    }
 }
