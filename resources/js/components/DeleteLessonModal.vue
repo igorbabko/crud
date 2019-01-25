@@ -21,11 +21,25 @@
     export default {
         props: ['lesson'],
 
+        data() {
+            return {
+                $modal: null
+            }
+        },
+
+        mounted() {
+            this.$modal = $(this.$refs.modal);
+
+            this.$modal.on('hidden.bs.modal', (e) => {
+                this.$emit('reset');
+            });
+        },
+
         methods: {
             remove() {
                 axios.delete(`/api/lessons/${this.lesson.id}`).then(response => {
                     this.$emit('deleted');
-                    $(this.$refs.modal).modal('hide');
+                    this.$modal.modal('hide');
                 });
             }
         }

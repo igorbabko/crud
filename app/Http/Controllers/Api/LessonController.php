@@ -61,7 +61,7 @@ class LessonController extends Controller
         $lesson->name = $request->name;
         $lesson->syncUsers($request->user_ids);
 
-        return tap($lesson)->save();
+        return tap($lesson)->save()->refresh();
     }
 
     /**

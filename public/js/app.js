@@ -1784,14 +1784,27 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['lesson'],
+  data: function data() {
+    return {
+      $modal: null
+    };
+  },
+  mounted: function mounted() {
+    var _this = this;
+
+    this.$modal = $(this.$refs.modal);
+    this.$modal.on('hidden.bs.modal', function (e) {
+      _this.$emit('reset');
+    });
+  },
   methods: {
     remove: function remove() {
-      var _this = this;
+      var _this2 = this;
 
       axios.delete("/api/lessons/".concat(this.lesson.id)).then(function (response) {
-        _this.$emit('deleted');
+        _this2.$emit('deleted');
 
-        $(_this.$refs.modal).modal('hide');
+        _this2.$modal.modal('hide');
       });
     }
   }
@@ -1846,6 +1859,7 @@ __webpack_require__.r(__webpack_exports__);
   props: ['lesson', 'users'],
   data: function data() {
     return {
+      $modal: null,
       errors: null,
       form: {
         name: '',
@@ -1856,13 +1870,28 @@ __webpack_require__.r(__webpack_exports__);
   mounted: function mounted() {
     var _this = this;
 
-    $(this.$refs.modal).on('show.bs.modal', function (e) {
+    this.$modal = $(this.$refs.modal);
+    this.$modal.on('show.bs.modal', function (e) {
       _this.form.name = _this.lesson ? _this.lesson.name : '';
       _this.form.user_ids = _this.userIds;
-      $('.selectpicker').selectpicker();
+
+      _this.$nextTick(function () {
+        return $('.selectpicker').selectpicker('refresh');
+      });
     });
-    $(this.$refs.modal).on('shown.bs.modal', function (e) {
+    this.$modal.on('shown.bs.modal', function (e) {
       $('#name').select().focus();
+    });
+    this.$modal.on('hide.bs.modal', function (e) {
+      _this.form = {
+        name: '',
+        user_ids: []
+      };
+    });
+    this.$modal.on('hidden.bs.modal', function (e) {
+      $('.selectpicker').selectpicker('refresh');
+
+      _this.$emit('reset');
     });
   },
   computed: {
@@ -1875,7 +1904,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     userIds: function userIds() {
       return this.lesson ? this.lesson.users.map(function (user) {
-        return user.id;
+        return parseInt(user.id);
       }) : [];
     },
     title: function title() {
@@ -1892,7 +1921,7 @@ __webpack_require__.r(__webpack_exports__);
       axios.post('/api/lessons', this.form).then(function (response) {
         _this3.$emit('created', response.data);
 
-        $(_this3.$refs.modal).modal('hide');
+        _this3.$modal.modal('hide');
       }).catch(function (error) {
         _this3.errors = error.response.data.errors;
       });
@@ -1903,7 +1932,7 @@ __webpack_require__.r(__webpack_exports__);
       axios.patch("/api/lessons/".concat(this.lesson.id), this.form).then(function (response) {
         _this4.$emit('updated', response.data);
 
-        $(_this4.$refs.modal).modal('hide');
+        _this4.$modal.modal('hide');
       }).catch(function (error) {
         _this4.errors = error.response.data.errors;
       });
@@ -1925,6 +1954,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _DeleteLessonModal__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DeleteLessonModal */ "./resources/js/components/DeleteLessonModal.vue");
 /* harmony import */ var _ShowLessonModal__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ShowLessonModal */ "./resources/js/components/ShowLessonModal.vue");
 /* harmony import */ var _LessonModal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./LessonModal */ "./resources/js/components/LessonModal.vue");
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -1987,14 +2025,15 @@ __webpack_require__.r(__webpack_exports__);
     this.table = $(this.$refs.table).DataTable({
       ajax: '/api/lessons',
       responsive: true,
+      aaSorting: [],
       columns: [{
         data: 'name'
       }, {
-        data: 'lesson',
+        data: 'id',
         width: '10%',
         orderable: false,
         render: function render(id, type, row, meta) {
-          return "\n                        <div class=\"action-buttons\" data-id=\"".concat(meta.row, "\">\n                            <button type=\"button\" class=\"btn btn-sm btn-primary btn-add\" data-toggle=\"modal\" data-target=\"#showLessonModal\">\n                                <i class=\"fas fa-eye\"></i>\n                            </button>\n                            <button type=\"button\" class=\"btn btn-sm btn-info btn-edit\" data-toggle=\"modal\" data-target=\"#lessonModal\">\n                                <i class=\"fas fa-edit\"></i>\n                            </button>\n                            <a href=\"#\" >\n                            <button type=\"button\" class=\"btn btn-sm btn-danger btn-delete\" data-toggle=\"modal\" data-target=\"#deleteLessonModal\">\n                                <i class=\"fas fa-times\"></i>\n                            </button>\n                        </div>\n                    ");
+          return "\n                        <div class=\"action-buttons\" data-id=\"".concat(meta.row, "\">\n                            <button type=\"button\" class=\"btn btn-sm btn-primary btn-add\" data-toggle=\"modal\" data-target=\"#showLessonModal\">\n                                <i class=\"fas fa-eye\"></i>\n                            </button>\n                            <button type=\"button\" class=\"btn btn-sm btn-info btn-edit\" data-toggle=\"modal\" data-target=\"#lessonModal\">\n                                <i class=\"fas fa-edit\"></i>\n                            </button>\n                            <button type=\"button\" class=\"btn btn-sm btn-danger btn-delete\" data-toggle=\"modal\" data-target=\"#deleteLessonModal\">\n                                <i class=\"fas fa-times\"></i>\n                            </button>\n                        </div>\n                    ");
         }
       }],
       initComplete: function initComplete(settings, json) {
@@ -2010,15 +2049,22 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     add: function add(lesson) {
       this.table.row.add(lesson);
+      this.reset();
       return this;
     },
     update: function update(lesson) {
       this.table.row(this.currentIndex).data(lesson);
+      this.reset();
       return this;
     },
     remove: function remove() {
-      this.table.row(this.currentIndex).remove().draw();
+      this.table.row(this.currentIndex).remove();
+      this.table.rows().invalidate('data').draw(false);
+      this.reset();
       return this;
+    },
+    reset: function reset() {
+      this.lesson = this.currentIndex = null;
     }
   }
 });
@@ -2056,7 +2102,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['lesson']
+  props: ['lesson'],
+  mounted: function mounted() {
+    var _this = this;
+
+    $(this.$refs.modal).on('hidden.bs.modal', function (e) {
+      _this.$emit('reset');
+    });
+  }
 });
 
 /***/ }),
@@ -57103,7 +57156,26 @@ var render = function() {
   return _c(
     "div",
     [
-      _vm._m(0),
+      _c("div", { staticClass: "heading-line mb-2" }, [
+        _c("h1", [_vm._v("Lessons")]),
+        _vm._v(" "),
+        _c(
+          "button",
+          {
+            staticClass: "btn btn-success",
+            attrs: {
+              type: "button",
+              "data-toggle": "modal",
+              "data-target": "#lessonModal"
+            },
+            on: { click: _vm.reset }
+          },
+          [
+            _c("i", { staticClass: "fas fa-plus-circle" }),
+            _vm._v(" New\n        ")
+          ]
+        )
+      ]),
       _vm._v(" "),
       _c(
         "table",
@@ -57111,47 +57183,28 @@ var render = function() {
           ref: "table",
           staticClass: "table table-striped table-bordered nowrap"
         },
-        [_vm._m(1), _vm._v(" "), _vm._m(2)]
+        [_vm._m(0), _vm._v(" "), _vm._m(1)]
       ),
       _vm._v(" "),
       _c("lesson-modal", {
         attrs: { lesson: _vm.lesson, users: _vm.users },
-        on: { created: _vm.add, updated: _vm.update }
+        on: { created: _vm.add, updated: _vm.update, reset: _vm.reset }
       }),
       _vm._v(" "),
-      _c("show-lesson-modal", { attrs: { lesson: _vm.lesson } }),
+      _c("show-lesson-modal", {
+        attrs: { lesson: _vm.lesson },
+        on: { reset: _vm.reset }
+      }),
       _vm._v(" "),
       _c("delete-lesson-modal", {
         attrs: { lesson: _vm.lesson },
-        on: { deleted: _vm.remove }
+        on: { deleted: _vm.remove, reset: _vm.reset }
       })
     ],
     1
   )
 }
 var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "text-right mb-2" }, [
-      _c(
-        "button",
-        {
-          staticClass: "btn btn-success",
-          attrs: {
-            type: "button",
-            "data-toggle": "modal",
-            "data-target": "#lessonModal"
-          }
-        },
-        [
-          _c("i", { staticClass: "fas fa-plus-circle" }),
-          _vm._v(" New\n        ")
-        ]
-      )
-    ])
-  },
   function() {
     var _vm = this
     var _h = _vm.$createElement
@@ -57198,53 +57251,49 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm.lesson
-    ? _c(
-        "div",
-        {
-          ref: "modal",
-          staticClass: "modal fade",
-          attrs: {
-            id: "showLessonModal",
-            tabindex: "-1",
-            role: "dialog",
-            "aria-labelledby": "showLessonModalLabel",
-            "aria-hidden": "true"
-          }
-        },
-        [
-          _c(
-            "div",
-            { staticClass: "modal-dialog", attrs: { role: "document" } },
-            [
-              _c("div", { staticClass: "modal-content" }, [
-                _c("div", { staticClass: "modal-header" }, [
-                  _c(
-                    "h5",
-                    {
-                      staticClass: "modal-title",
-                      attrs: { id: "showLessonModalLabel" }
-                    },
-                    [_vm._v(_vm._s(_vm.lesson.name))]
-                  ),
-                  _vm._v(" "),
-                  _vm._m(0)
-                ]),
-                _vm._v(" "),
+  return _c(
+    "div",
+    {
+      ref: "modal",
+      staticClass: "modal fade",
+      attrs: {
+        id: "showLessonModal",
+        tabindex: "-1",
+        role: "dialog",
+        "aria-labelledby": "showLessonModalLabel",
+        "aria-hidden": "true"
+      }
+    },
+    [
+      _c("div", { staticClass: "modal-dialog", attrs: { role: "document" } }, [
+        _vm.lesson
+          ? _c("div", { staticClass: "modal-content" }, [
+              _c("div", { staticClass: "modal-header" }, [
                 _c(
-                  "div",
-                  { staticClass: "modal-body" },
-                  [_c("users", { attrs: { users: _vm.lesson.users } })],
-                  1
+                  "h5",
+                  {
+                    staticClass: "modal-title",
+                    attrs: { id: "showLessonModalLabel" }
+                  },
+                  [_vm._v(_vm._s(_vm.lesson.name))]
                 ),
                 _vm._v(" "),
-                _vm._m(1)
-              ])
-            ]
-          )
-        ]
-      )
-    : _vm._e()
+                _vm._m(0)
+              ]),
+              _vm._v(" "),
+              _c(
+                "div",
+                { staticClass: "modal-body" },
+                [_c("users", { attrs: { users: _vm.lesson.users } })],
+                1
+              ),
+              _vm._v(" "),
+              _vm._m(1)
+            ])
+          : _vm._e()
+      ])
+    ]
+  )
 }
 var staticRenderFns = [
   function() {
@@ -68631,7 +68680,6 @@ window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.
 
 Vue.component('users', __webpack_require__(/*! ./components/Users.vue */ "./resources/js/components/Users.vue").default);
 Vue.component('lessons', __webpack_require__(/*! ./components/Lessons.vue */ "./resources/js/components/Lessons.vue").default);
-Vue.component('toast', __webpack_require__(/*! ./components/Toast.vue */ "./resources/js/components/Toast.vue").default);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
@@ -68977,17 +69025,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ShowLessonModal_vue_vue_type_template_id_b4f8c506___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
-
-/***/ }),
-
-/***/ "./resources/js/components/Toast.vue":
-/*!*******************************************!*\
-  !*** ./resources/js/components/Toast.vue ***!
-  \*******************************************/
-/*! exports provided: default */
-/***/ (function(module, exports) {
-
-throw new Error("Module build failed (from ./node_modules/vue-loader/lib/index.js):\nError: ENOENT: no such file or directory, open '/Users/igorbabko/code/surveys/resources/js/components/Toast.vue'");
 
 /***/ }),
 

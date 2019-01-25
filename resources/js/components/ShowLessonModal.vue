@@ -1,7 +1,7 @@
 <template>
-    <div v-if="lesson" ref="modal" class="modal fade" id="showLessonModal" tabindex="-1" role="dialog" aria-labelledby="showLessonModalLabel" aria-hidden="true">
+    <div ref="modal" class="modal fade" id="showLessonModal" tabindex="-1" role="dialog" aria-labelledby="showLessonModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
-            <div class="modal-content">
+            <div v-if="lesson" class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="showLessonModalLabel">{{ lesson.name }}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -21,6 +21,12 @@
 
 <script>
     export default {
-        props: ['lesson']
+        props: ['lesson'],
+
+        mounted() {
+            $(this.$refs.modal).on('hidden.bs.modal', (e) => {
+                this.$emit('reset');
+            });
+        }
     }
 </script>

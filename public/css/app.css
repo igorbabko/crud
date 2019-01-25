@@ -6051,3 +6051,9 @@ table {
 #showLessonModal .modal-dialog {
   max-width: 900px !important;
 }
+
+.heading-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

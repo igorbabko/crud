@@ -38,6 +38,7 @@
 
         data() {
             return {
+                $modal: null,
                 errors: null,
                 form: {
                     name: '',
@@ -47,14 +48,26 @@
         },
 
         mounted() {
-            $(this.$refs.modal).on('show.bs.modal', (e) => {
+            this.$modal = $(this.$refs.modal);
+
+            this.$modal.on('show.bs.modal', (e) => {
                 this.form.name = this.lesson ? this.lesson.name : '';
                 this.form.user_ids = this.userIds;
-                $('.selectpicker').selectpicker();
+
+                this.$nextTick(() => $('.selectpicker').selectpicker('refresh'))
             });
 
-            $(this.$refs.modal).on('shown.bs.modal', (e) => {
+            this.$modal.on('shown.bs.modal', (e) => {
                 $('#name').select().focus();
+            });
+
+            this.$modal.on('hide.bs.modal', (e) => {
+                this.form = { name: '', user_ids: [] }
+            });
+
+            this.$modal.on('hidden.bs.modal', (e) => {
+                $('.selectpicker').selectpicker('refresh');
+                this.$emit('reset')
             });
         },
 
@@ -63,7 +76,7 @@
                 return field => this.errors && this.errors[field];
             },
             userIds() {
-                return this.lesson ? this.lesson.users.map(user => user.id) : [];
+                return this.lesson ? this.lesson.users.map(user => parseInt(user.id)) : [];
             },
             title() {
                 return this.lesson ? 'Edit Lesson' : 'Create Lesson';
@@ -78,7 +91,7 @@
             create() {
                 axios.post('/api/lessons', this.form).then(response => {
                     this.$emit('created', response.data);
-                    $(this.$refs.modal).modal('hide');
+                    this.$modal.modal('hide');
                 }).catch(error => {
                     this.errors = error.response.data.errors;
                 })
@@ -87,7 +100,7 @@
             update() {
                 axios.patch(`/api/lessons/${this.lesson.id}`, this.form).then(response => {
                     this.$emit('updated', response.data);
-                    $(this.$refs.modal).modal('hide');
+                    this.$modal.modal('hide');
                 }).catch(error => {
                     this.errors = error.response.data.errors;
                 })
