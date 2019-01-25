@@ -29,12 +29,7 @@ Vue.component('lessons', require('./components/Lessons.vue').default);
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-
-// var dt = require('datatables.net');
-// window.$.DataTable = dt;
-
-import 'datatables.net';
-import 'datatables.net-dt/css/jquery.dataTables.css';
+import 'datatables.net-responsive-bs4';
 
 const app = new Vue({
     el: '#app'

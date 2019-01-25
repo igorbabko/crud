@@ -20,6 +20,18 @@ class LessonController extends Controller
             ->addColumn('name', function ($lesson) {
                 return $lesson->name;
             })
+            ->addColumn('actions', function ($lesson) {
+                return '
+                    <form action="'.route('lessons.destroy', $lesson->id).'" class="delete-survey-form"  method="POST">
+                        <a href="'.route('lessons.edit', $lesson->id).'" class="btn btn-sm btn-primary"><i class="fas fa-eye"></i></a>
+                        <a href="#" class="btn btn-sm btn-info btn-show-users" data-id="'.$lesson->id.'"><i class="fas fa-edit"></i></a>
+                        '.csrf_field().'
+                        <input type="hidden" name="_method" value="delete">
+                        <button type="button" class="btn btn-sm btn-danger delete-survey-button"><i class="fas fa-times"></i></button>
+                    </form>
+                ';
+            })
+            ->rawColumns(['actions'])
             ->make(true);
     }
 
