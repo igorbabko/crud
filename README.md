@@ -1,9 +1,9 @@
 # CRUD App
-![Studnote](https://github.com/IgorBabko/studnote/blob/development/public/img/banner.png)
+![CRUD](https://github.com/igorbabko/crud/blob/master/public/images/logo.png)
 
 # Installation
 ```
-    git clone git@github.com:IgorBabko/studnote.git
+    git clone git@github.com:igorbabko/crud.git
     cd crud
     composer install
     cp .env.example .env
