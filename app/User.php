@@ -16,7 +16,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'job_title', 'password',
     ];
 
     /**
@@ -27,4 +27,16 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function lessons()
+    {
+        return $this->belongsToMany(Lesson::class)->withTimestamps();
+    }
+
+    public function syncLessons($lessonIds = [])
+    {
+        $this->lessons()->sync($lessonIds);
+
+        return $this;
+    }
 }

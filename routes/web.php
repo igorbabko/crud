@@ -11,6 +11,7 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::redirect('/', '/lessons');
+
+Route::view('/lessons', 'lessons.index')->name('lessons.index');
+Route::view('/users', 'users.index')->name('users.index');

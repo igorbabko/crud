@@ -1,14 +1,28 @@
+$fa-font-path: '/webfonts';
 
-// Fonts
-@import url('https://fonts.googleapis.com/css?family=Nunito');
+@import '~@fortawesome/fontawesome-free/scss/solid';
+@import '~@fortawesome/fontawesome-free/scss/fontawesome';
+@import '~bootstrap-select/dist/css/bootstrap-select';
 
-// Variables
-@import 'variables';
+body > .container {
+    margin-top: 80px;
+}
 
-// Bootstrap
-@import '~bootstrap/scss/bootstrap';
+li.selected {
+    background: #efefef;
+}
 
-.navbar-laravel {
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+#editModal .bootstrap-select,
+table {
+    width: 100% !important;
+}
+
+#viewModal .modal-dialog {
+    max-width: 900px !important;
+}
+
+.heading-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
