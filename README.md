@@ -2,11 +2,8 @@
 ![Studnote](https://github.com/IgorBabko/studnote/blob/development/public/img/banner.png)
 
 # Installation
-
-    git clone git@github.com:IgorBabko/studnote.git
-
-Switch to the repo folder
 ```
+    git clone git@github.com:IgorBabko/studnote.git
     cd crud
     composer install
     cp .env.example .env
