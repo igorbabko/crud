@@ -1,5 +1,9 @@
 @extends ('layout')
 
 @section ('content')
-    <users>
+    <div class="row">
+        <div class="col-12">
+            <users :with-heading="true" />
+        </div>
+    </div>
 @endsection

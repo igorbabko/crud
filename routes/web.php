@@ -13,5 +13,5 @@
 
 Route::redirect('/', '/lessons');
 
-Route::view('/lessons', 'lessons.index');
-Route::view('/users', 'users.index');
+Route::view('/lessons', 'lessons.index')->name('lessons.index');
+Route::view('/users', 'users.index')->name('users.index');

@@ -16,7 +16,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return Datatables::of(User::latest())
+        return DataTables::of(User::with('lessons')->latest())
             ->addColumn('name', function ($user) {
                 return $user->name;
             })
@@ -26,17 +26,10 @@ class UserController extends Controller
             ->addColumn('job_title', function ($user) {
                 return $user->job_title;
             })
+            ->addColumn('id', function ($user) {
+                return $user->id;
+            })
             ->make(true);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -47,29 +40,18 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        $data = $request->validate([
+            'name' => 'required|max:255',
+            'email' => 'required|email|max:255',
+            'job_title' => 'required|max:255',
+            'lesson_ids.*' => 'exists:lessons,id'
+        ]);
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
-     */
-    public function show(User $user)
-    {
-        //
-    }
+        $data['password'] = bcrypt(str_random(16));
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(User $user)
-    {
-        //
+        return User::create($data)
+            ->syncLessons($request->lesson_ids)
+            ->load('lessons');
     }
 
     /**
@@ -81,17 +63,28 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        //
+        $data = $request->validate([
+            'name' => 'required|max:255',
+            'email' => 'required|email|max:255',
+            'job_title' => 'required|max:255',
+            'lesson_ids.*' => 'exists:lessons,id'
+        ]);
+
+        $user->fill($data)->save();
+
+        return $user->syncLessons($request->lesson_ids)->load('lessons');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\User  $user
+     * @param  \App\Lesson  $user
      * @return \Illuminate\Http\Response
      */
     public function destroy(User $user)
     {
-        //
+        $user->delete();
+
+        return response()->json(['message' => 'User has been deleted']);
     }
 }

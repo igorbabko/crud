@@ -16,7 +16,7 @@ class LessonController extends Controller
      */
     public function index()
     {
-        return Datatables::of(Lesson::latest())
+        return DataTables::of(Lesson::latest())
             ->addColumn('name', function ($lesson) {
                 return $lesson->name;
             })

@@ -1,36 +1,23 @@
-
-// Fonts
-// @import url('https://fonts.googleapis.com/css?family=Nunito');
-
-// Variables
-// @import 'variables';
-
-// Bootstrap
-// @import '~bootstrap/scss/bootstrap';
-
 $fa-font-path: '/webfonts';
 
-// @import '~@fortawesome/fontawesome-free/scss/brands';
 @import '~@fortawesome/fontawesome-free/scss/solid';
-// @import '~@fortawesome/fontawesome-free/scss/regular';
 @import '~@fortawesome/fontawesome-free/scss/fontawesome';
-
 @import '~bootstrap-select/dist/css/bootstrap-select';
 
-body {
-    padding: 50px;
+body > .container {
+    margin-top: 80px;
 }
 
 li.selected {
     background: #efefef;
 }
 
-#lessonModal .bootstrap-select,
+#editModal .bootstrap-select,
 table {
     width: 100% !important;
 }
 
-#showLessonModal .modal-dialog {
+#viewModal .modal-dialog {
     max-width: 900px !important;
 }
 

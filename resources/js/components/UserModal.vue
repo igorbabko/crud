@@ -16,9 +16,19 @@
                             <div v-if="isInvalid('name')" v-text="errors.name[0]" class="invalid-feedback"></div>
                         </div>
                         <div class="form-group">
-                            <label for="userIds" class="col-form-label">Users:</label>
-                            <select id="userIds" class="selectpicker" v-model="form.user_ids" multiple>
-                                <option v-for="user in users" :key="user.id" :value="user.id">{{ user.name }}</option>
+                            <label for="email" class="col-form-label">Email:</label>
+                            <input v-model="form.email" type="email" :class="['form-control', {'is-invalid': isInvalid('email')}]" id="email">
+                            <div v-if="isInvalid('email')" v-text="errors.email[0]" class="invalid-feedback"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="job_title" class="col-form-label">Job Title:</label>
+                            <input v-model="form.job_title" type="text" :class="['form-control', {'is-invalid': isInvalid('job_title')}]" id="job_title">
+                            <div v-if="isInvalid('job_title')" v-text="errors.job_title[0]" class="invalid-feedback"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="userIds" class="col-form-label">Lessons:</label>
+                            <select id="userIds" class="selectpicker" v-model="form.lesson_ids" multiple>
+                                <option v-for="lesson in lessons" :key="lesson.id" :value="lesson.id">{{ lesson.name }}</option>
                             </select>
                         </div>
                     </form>
@@ -38,31 +48,35 @@
     export default {
         mixins: [Modal],
 
-        props: ['users'],
+        props: ['lessons'],
 
         data() {
             return {
-                type: 'lessons',
+                type: 'users',
                 form: {
                     name: '',
-                    user_ids: []
+                    email: '',
+                    job_title: '',
+                    lesson_ids: []
                 }
             }
         },
 
         computed: {
-            userIds() {
-                return this.item ? this.item.users.map(user => parseInt(user.id)) : [];
+            lessonIds() {
+                return this.item ? this.item.lessons.map(lesson => parseInt(lesson.id)) : [];
             },
         },
 
         methods: {
             fillForm() {
                 this.form.name = this.item ? this.item.name : '';
-                this.form.user_ids = this.userIds;
+                this.form.email = this.item ? this.item.email : '';
+                this.form.job_title = this.item ? this.item.job_title : '';
+                this.form.lesson_ids = this.lessonIds;
             },
             emptyForm() {
-                this.form = { name: '', user_ids: [] };
+                this.form = { name: '', email: '', job_title: '', lesson_ids: [] };
             }
         }
     }

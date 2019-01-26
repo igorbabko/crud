@@ -6035,20 +6035,20 @@ select.selectpicker {
   width: 100%;
   float: none;
 }
-body {
-  padding: 50px;
+body > .container {
+  margin-top: 80px;
 }
 
 li.selected {
   background: #efefef;
 }
 
-#lessonModal .bootstrap-select,
+#editModal .bootstrap-select,
 table {
   width: 100% !important;
 }
 
-#showLessonModal .modal-dialog {
+#viewModal .modal-dialog {
   max-width: 900px !important;
 }
 
