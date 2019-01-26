@@ -6,6 +6,7 @@
         <title>CRUD</title>
         <link rel="icon" type="image/png" href="/favicon.png" />
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        <link href="{{ asset('/css/vendor.css') }}" rel="stylesheet" type="text/css">
         <link href="{{ asset('/css/app.css') }}" rel="stylesheet" type="text/css">
     </head>
     <body>

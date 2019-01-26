@@ -2202,7 +2202,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['item'],
+  props: ['title', 'item'],
   mounted: function mounted() {
     var _this = this;
 
@@ -57738,7 +57738,7 @@ var render = function() {
             _vm.item
               ? _c(
                   "view-modal",
-                  { attrs: { item: _vm.item } },
+                  { attrs: { title: "Users", item: _vm.item } },
                   [_c("users", { attrs: { items: _vm.item.users } })],
                   1
                 )
@@ -58130,7 +58130,7 @@ var render = function() {
             _vm.item
               ? _c(
                   "view-modal",
-                  { attrs: { item: _vm.item } },
+                  { attrs: { title: "Lessons", item: _vm.item } },
                   [_c("lessons", { attrs: { items: _vm.item.lessons } })],
                   1
                 )
@@ -58193,7 +58193,7 @@ var render = function() {
             _c(
               "h5",
               { staticClass: "modal-title", attrs: { id: "viewModalLabel" } },
-              [_vm._v(_vm._s(_vm.item.name))]
+              [_vm._v(_vm._s(_vm.title || _vm.item.name))]
             ),
             _vm._v(" "),
             _vm._m(0)

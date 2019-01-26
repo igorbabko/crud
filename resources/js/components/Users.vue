@@ -26,7 +26,7 @@
         </table>
 
         <template v-if="withActions">
-            <view-modal v-if="item" :item="item">
+            <view-modal v-if="item" title="Lessons" :item="item">
                 <lessons :items="item.lessons" />
             </view-modal>
 

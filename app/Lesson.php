@@ -8,8 +8,6 @@ class Lesson extends Model
 {
     protected $guarded = [];
 
-    protected $with = ['users'];
-
     public function users()
     {
         return $this->belongsToMany(User::class)->withTimestamps();

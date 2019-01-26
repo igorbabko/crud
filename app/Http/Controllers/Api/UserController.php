@@ -72,7 +72,9 @@ class UserController extends Controller
 
         $user->fill($data)->save();
 
-        return $user->syncLessons($request->lesson_ids)->load('lessons');
+        return $user
+            ->syncLessons($request->lesson_ids)
+            ->load('lessons');
     }
 
     /**

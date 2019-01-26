@@ -22,7 +22,7 @@
         </table>
 
         <template v-if="withActions">
-            <view-modal v-if="item" :item="item">
+            <view-modal v-if="item" title="Users" :item="item">
                 <users :items="item.users" />
             </view-modal>
 
