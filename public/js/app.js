@@ -70220,8 +70220,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /Users/igorbabko/code/surveys/resources/js/app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! /Users/igorbabko/code/surveys/resources/sass/app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! /Users/igorbabko/code/crud/resources/js/app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! /Users/igorbabko/code/crud/resources/sass/app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
