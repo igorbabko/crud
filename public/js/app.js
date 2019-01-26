@@ -70095,6 +70095,8 @@ __webpack_require__.r(__webpack_exports__);
         _this3.$emit('created', response.data);
 
         _this3.$modal.modal('hide');
+
+        _this3.errors = null;
       }).catch(function (error) {
         _this3.errors = error.response.data.errors;
       });
@@ -70106,6 +70108,8 @@ __webpack_require__.r(__webpack_exports__);
         _this4.$emit('updated', response.data);
 
         _this4.$modal.modal('hide');
+
+        _this4.errors = null;
       }).catch(function (error) {
         _this4.errors = error.response.data.errors;
       });

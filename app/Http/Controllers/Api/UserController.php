@@ -42,7 +42,7 @@ class UserController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|max:255',
-            'email' => 'required|email|max:255',
+            'email' => 'required|email|max:255|unique:users,email',
             'job_title' => 'required|max:255',
             'lesson_ids.*' => 'exists:lessons,id'
         ]);
@@ -65,7 +65,7 @@ class UserController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|max:255',
-            'email' => 'required|email|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
             'job_title' => 'required|max:255',
             'lesson_ids.*' => 'exists:lessons,id'
         ]);

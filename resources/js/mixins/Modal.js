@@ -59,6 +59,7 @@ export default {
             axios.post(`/api/${this.type}`, this.form).then(response => {
                 this.$emit('created', response.data);
                 this.$modal.modal('hide');
+                this.errors = null
             }).catch(error => {
                 this.errors = error.response.data.errors;
             })
@@ -68,6 +69,7 @@ export default {
             axios.patch(`/api/${this.type}/${this.item.id}`, this.form).then(response => {
                 this.$emit('updated', response.data);
                 this.$modal.modal('hide');
+                this.errors = null
             }).catch(error => {
                 this.errors = error.response.data.errors;
             })
