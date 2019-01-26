@@ -6,6 +6,7 @@
     git clone git@github.com:IgorBabko/studnote.git
 
 Switch to the repo folder
+```
     cd crud
     composer install
     cp .env.example .env
@@ -14,3 +15,4 @@ Switch to the repo folder
     php artisan db:seed
     npm install
     npm run dev
+```
